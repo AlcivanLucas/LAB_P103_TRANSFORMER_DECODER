@@ -47,3 +47,52 @@ def proof_task_1():
 	print(np.allclose(np.triu(attention_weights, k=1), 0.0))
 	print("-" * 30)
 
+
+# --- Tarefa 2: A Ponte Encoder-Decoder (Cross-Attention) ---
+
+
+def cross_attention(encoder_output, decoder_state):
+	"""Calcula Cross-Attention entre a saída do encoder e o estado do decoder."""
+	d_model = encoder_output.shape[-1]
+	d_k = d_model  # Simplificação
+
+	# Pesos arbitrários para projeção
+	Wq = np.random.randn(d_model, d_k)
+	Wk = np.random.randn(d_model, d_k)
+	Wv = np.random.randn(d_model, d_k)
+
+	# Projeções
+	# Decoder fornece a Query (Q)
+	Q = np.matmul(decoder_state, Wq)  # [batch, seq_len_en, d_k]
+
+	# Encoder fornece Keys (K) e Values (V)
+	K = np.matmul(encoder_output, Wk)  # [batch, seq_len_fr, d_k]
+	V = np.matmul(encoder_output, Wv)  # [batch, seq_len_fr, d_k]
+
+	# Scaled Dot-Product Attention
+	# Q: [batch, seq_len_en, d_k], K^T: [batch, d_k, seq_len_fr]
+	scores = np.matmul(Q, K.transpose(0, 2, 1)) / np.sqrt(d_k)
+	weights = softmax(scores)
+
+	output = np.matmul(weights, V)
+	return output, weights
+
+
+def run_task_2():
+	print("\n--- Tarefa 2: Cross-Attention ---")
+	batch_size = 1
+	seq_len_fr = 10
+	seq_len_en = 4
+	d_model = 512
+
+	encoder_output = np.random.randn(batch_size, seq_len_fr, d_model)
+	decoder_state = np.random.randn(batch_size, seq_len_en, d_model)
+
+	output, weights = cross_attention(encoder_output, decoder_state)
+
+	print(f"Dimensões do encoder_output: {encoder_output.shape}")
+	print(f"Dimensões do decoder_state: {decoder_state.shape}")
+	print(f"Dimensões da saída da Cross-Attention: {output.shape}")
+	print(f"Dimensões dos pesos de atenção: {weights.shape}")
+	print("-" * 30)
+
