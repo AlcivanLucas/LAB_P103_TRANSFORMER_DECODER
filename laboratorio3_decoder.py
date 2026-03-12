@@ -96,3 +96,27 @@ def run_task_2():
 	print(f"Dimensões dos pesos de atenção: {weights.shape}")
 	print("-" * 30)
 
+
+# --- Tarefa 3: Simulando o Loop de Inferência Auto-Regressivo ---
+
+
+# Vocabulário fictício para demonstração
+VOCAB = ["<PAD>", "<START>", "o", "rato", "roeu", "a", "roupa", "do", "rei", "de", "roma", "<EOS>"]
+VOCAB_SIZE = 10000
+
+
+def generate_next_token(current_sequence, encoder_output):
+	"""Simula a passagem pelo decoder e retorna um vetor de probabilidades."""
+	# Mock: Retorna um vetor de probabilidades de tamanho VOCAB_SIZE
+	probs = np.random.rand(VOCAB_SIZE)
+
+	# Para tornar a simulação "realista", vamos dar alta probabilidade
+	# para a próxima palavra lógica da nossa frase mock.
+	next_idx_in_logic = len(current_sequence)
+	if next_idx_in_logic < len(VOCAB):
+		# Mapeia a palavra lógica para um índice no vocabulário de 10k
+		# Aqui apenas usamos o índice da lista VOCAB como índice real
+		probs[next_idx_in_logic] = 10.0
+
+	return softmax(probs)
+
