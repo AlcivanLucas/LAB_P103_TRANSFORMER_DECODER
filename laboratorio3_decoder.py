@@ -6,7 +6,7 @@ def softmax(x):
 	return e_x / e_x.sum(axis=-1, keepdims=True)
 
 
-# --- Tarefa 1: Implementando a Máscara Causa---
+# --- Tarefa 1: Implementando a Máscara Causal ---
 
 
 def create_causal_mask(seq_len):
@@ -119,4 +119,47 @@ def generate_next_token(current_sequence, encoder_output):
 		probs[next_idx_in_logic] = 10.0
 
 	return softmax(probs)
+
+
+def inference_loop():
+	print("\n--- Tarefa 3: Loop de Inferência ---")
+
+	encoder_output = np.random.randn(1, 10, 512)  # Saída fictícia do encoder
+	current_sequence = ["<START>"]
+
+	print(f"Sequência inicial: {current_sequence}")
+
+	max_steps = 20
+	step = 0
+
+	while step < max_steps:
+		# 1. Gera probabilidades para o próximo token
+		probs = generate_next_token(current_sequence, encoder_output)
+
+		# 2. Aplica argmax para selecionar a palavra com maior probabilidade
+		next_token_idx = np.argmax(probs)
+
+		# 3. Mapeia o índice de volta para a palavra (para print)
+		if next_token_idx < len(VOCAB):
+			next_token = VOCAB[next_token_idx]
+		else:
+			next_token = f"token_{next_token_idx}"
+
+		# 4. Adiciona a nova palavra à lista
+		current_sequence.append(next_token)
+
+		# 5. Interrompe se gerar <EOS>
+		if next_token == "<EOS>":
+			break
+
+		step += 1
+
+	print(f"Frase final gerada: {' '.join(current_sequence)}")
+	print("-" * 30)
+
+
+if __name__ == "__main__":
+	proof_task_1()
+	run_task_2()
+	inference_loop()
 
